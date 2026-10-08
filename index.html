@@ -1131,6 +1131,15 @@ let etat = {
   resultats: {} // { elementId: { statut, ecarts: [], autrePrecision } }
 };
 
+// Formatage déterministe de la date : AAAA-MM-JJ HH:MM
+// Identique sur tous les appareils (contrairement à toLocaleString) et
+// triable chronologiquement dans Excel même comme texte.
+function formaterDateHeure(d) {
+  const p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate())
+       + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+
 // ─────────────────────────────────────────
 // PHOTO
 // ─────────────────────────────────────────
@@ -1227,10 +1236,9 @@ function allerInspection() {
 
   etat.nom = nom;
   etat.chantier = chantier;
-  etat.dateHeure = new Date().toLocaleString('fr-CA', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit'
-  });
+  // Format déterministe AAAA-MM-JJ HH:MM, identique sur tous les appareils
+  // et triable chronologiquement dans Excel (évite les variations de toLocaleString)
+  etat.dateHeure = formaterDateHeure(new Date());
 
   construireGrilleElements();
   afficherEcran('liste');
